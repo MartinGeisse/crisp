@@ -9,6 +9,8 @@ package name.martingeisse.crisp.runtime;
  */
 public final class Null {
 
+	public static final Null INSTANCE = new Null();
+
 	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof Null;
@@ -19,4 +21,8 @@ public final class Null {
 		return 0;
 	}
 
+	@Override
+	public String toString() {
+		return "null";
+	}
 }

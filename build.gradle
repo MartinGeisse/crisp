@@ -27,5 +27,8 @@ dependencies {
 	compile 'joda-time:joda-time:2.5'
 	compile 'commons-beanutils:commons-beanutils:1.9.2'
 	compile 'commons-codec:commons-codec:1.9'
-	
+
+	// unit testing
+	testCompile 'junit:junit:4.12'
+
 }

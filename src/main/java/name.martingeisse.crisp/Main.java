@@ -8,4 +8,8 @@ package name.martingeisse.crisp;
  *
  */
 public class Main {
+
+	public static void main(String[] args) {
+	};
+
 }
