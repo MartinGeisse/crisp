@@ -29,8 +29,20 @@ public final class ExpressionBuilder {
 		return new Identifier(text);
 	}
 
+	public static Keyword keyword(String text) {
+		return new Keyword(text);
+	}
+
 	public static Pair call(String functionName, Object... elements) {
 		return pair(identifier(functionName), list(elements));
+	}
+
+	public static Object lambda(Object body, String... parameters) {
+		Object parameterList = Null.INSTANCE;
+		for (int i = parameters.length - 1; i >= 0; i--) {
+			parameterList = pair(identifier(parameters[i]), parameterList);
+		}
+		return list(keyword("lambda"), parameterList, body);
 	}
 
 }

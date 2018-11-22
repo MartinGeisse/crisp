@@ -50,5 +50,18 @@ public class SimpleTests {
 		assertEval(36, call("builtinSubtract", 40, call("builtinAdd", 3, 1)));
 	}
 
+	@Test
+	public void testKeywordExpressions() {
+		assertEval(Null.INSTANCE, keyword("null"));
+		assertEval(false, keyword("false"));
+		assertEval(true, keyword("true"));
+
+	}
+
+	@Test
+	public void testLambda() {
+		interpreter.defineGlobals(BuiltinEnvironment.TEMPLATE);
+		assertEval(6, list(lambda(call("builtinAdd", identifier("x"), identifier("x")), "x"), 3));
+	}
 
 }
