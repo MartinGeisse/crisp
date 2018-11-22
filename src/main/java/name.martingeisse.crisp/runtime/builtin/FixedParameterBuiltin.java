@@ -38,6 +38,11 @@ public abstract class FixedParameterBuiltin implements Builtin {
 		return result;
 	}
 
+	@Override
+	public String toString() {
+		return "builtin:" + getProperName();
+	}
+
 	// expects public method "callInternal"
 
 }

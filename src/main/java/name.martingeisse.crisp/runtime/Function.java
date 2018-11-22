@@ -48,13 +48,13 @@ public final class Function {
 		return "function " + properName;
 	}
 
-	public Map<String, Object> buildBodyEnvironment(List<Object> arguments) {
-		if (arguments.size() != parameters.size()) {
-			throw new CrispException("function " + properName + " expected " + parameters.size() + " arguments, got " + arguments.size());
+	public Map<String, Object> buildBodyEnvironment(Object[] arguments) {
+		if (arguments.length != parameters.size()) {
+			throw new CrispException("function " + properName + " expected " + parameters.size() + " arguments, got " + arguments.length);
 		}
 		Map<String, Object> bodyEnvironment = new HashMap<>(environment);
 		for (int i = 0; i < parameters.size(); i++) {
-			bodyEnvironment.put(parameters.get(i).getIdentifier(), arguments.get(i));
+			bodyEnvironment.put(parameters.get(i).getIdentifier(), arguments[i]);
 		}
 		return bodyEnvironment;
 	}

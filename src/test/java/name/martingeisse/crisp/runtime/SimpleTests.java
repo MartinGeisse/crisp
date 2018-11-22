@@ -1,5 +1,6 @@
 package name.martingeisse.crisp.runtime;
 
+import name.martingeisse.crisp.runtime.builtin.BuiltinEnvironment;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -38,8 +39,16 @@ public class SimpleTests {
 	}
 
 	@Test
-	public void testPlus() {
-		assertEval(45, call("builtinPlus", 40, 5));
+	public void testBuiltin() {
+		interpreter.defineGlobals(BuiltinEnvironment.TEMPLATE);
+		assertEval(37, call("builtinSubtract", 40, 3));
 	}
+
+	@Test
+	public void testNestedCalls() {
+		interpreter.defineGlobals(BuiltinEnvironment.TEMPLATE);
+		assertEval(36, call("builtinSubtract", 40, call("builtinAdd", 3, 1)));
+	}
+
 
 }

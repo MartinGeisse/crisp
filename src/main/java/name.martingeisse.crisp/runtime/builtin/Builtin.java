@@ -7,4 +7,6 @@ public interface Builtin {
 
 	Object call(Object... arguments);
 
+	String getProperName();
+
 }

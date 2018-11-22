@@ -69,12 +69,12 @@ public final class Pair {
 	}
 
 	private static void toString(Pair pair, StringBuilder builder) {
-		builder.append(pair);
+		builder.append(pair.getHead());
 		Object tail = pair.getTail();
 		if (tail instanceof Pair) {
 			builder.append(' ');
-			toString((Pair)tail, builder);
-		} else {
+			toString((Pair) tail, builder);
+		} else if (!(tail instanceof Null)) {
 			builder.append(" . ");
 			builder.append(tail);
 		}

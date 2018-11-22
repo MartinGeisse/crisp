@@ -24,9 +24,24 @@ public final class Interpreter {
 	private final Map<String, Object> globalEnvironment = new HashMap<>();
 	private final LinkedList<TodoItem> todoStack = new LinkedList<>();
 	private final LinkedList<Object> valueStack = new LinkedList<>();
+	private boolean debug;
 
 	public void defineGlobal(String identifier, Object value) {
 		globalEnvironment.put(identifier, value);
+	}
+
+	public void defineGlobals(Map<String, Object> map) {
+		for (Map.Entry<String, Object> entry : map.entrySet()) {
+			defineGlobal(entry.getKey(), entry.getValue());
+		}
+	}
+
+	public boolean isDebug() {
+		return debug;
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
 	}
 
 	public Object evaluate(Object expression) {
@@ -35,10 +50,23 @@ public final class Interpreter {
 		}
 		todoStack.push(new EvaluateItem(expression, new HashMap<>(globalEnvironment)));
 		while (!todoStack.isEmpty()) {
+			if (debug) {
+				System.out.println();
+				System.out.println("------------------------------------------------------");
+				System.out.println();
+				System.out.println("todo: " + todoStack);
+				System.out.println("values: " + valueStack);
+			}
 			todoStack.pop().run();
 		}
 		if (valueStack.size() != 1) {
 			throw new IllegalStateException("after evaluation, value stack size is " + valueStack.size());
+		}
+		if (debug) {
+			System.out.println();
+			System.out.println("------------------------------------------------------");
+			System.out.println();
+			System.out.println("result: " + valueStack.peek());
 		}
 		return valueStack.pop();
 	}
@@ -70,13 +98,19 @@ public final class Interpreter {
 				valueStack.push(value);
 			} else if (expression instanceof Pair) {
 				List<Object> list = ((Pair) expression).toList();
-				todoStack.push(new CallItem(list.size()));
+				todoStack.push(new CallItem(list.size() - 1));
 				for (int i = list.size() - 1; i >= 0; i--) {
 					todoStack.push(new EvaluateItem(list.get(i), environment));
 				}
+			} else {
+				throw new CrispException("invalid expression: " + expression);
 			}
 		}
 
+		@Override
+		public String toString() {
+			return "{eval: " + expression + " in " + environment + "}";
+		}
 	}
 
 	private final class CallItem implements TodoItem {
@@ -89,9 +123,9 @@ public final class Interpreter {
 
 		@Override
 		public void run() {
-			List<Object> arguments = new ArrayList<>();
+			Object[] arguments = new Object[argumentCount];
 			for (int i = argumentCount - 1; i >= 0; i--) {
-				arguments.set(i, valueStack.pop());
+				arguments[i] = valueStack.pop();
 			}
 			Object callTarget = valueStack.pop();
 			if (callTarget instanceof Function) {
@@ -104,6 +138,11 @@ public final class Interpreter {
 			} else {
 				throw new CrispException("not a function or builtin: " + callTarget);
 			}
+		}
+
+		@Override
+		public String toString() {
+			return "{call with " + argumentCount + " arguments}";
 		}
 	}
 
