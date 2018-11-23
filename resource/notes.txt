@@ -1,0 +1,84 @@
+
+eager eval -> don't know how to even start with induction on infinite data structures
+
+but: without lazy eval, need special support for "if" to handle non-termination.
+
+proofs expressed in s-expressions, e.g. based on transformation of subject expressions which are also expressed
+    in s-expressions --> can re-use all the usual tools
+
+constructors; data structures: Don't need something like a "union of structs". Only need to define single constructors.
+    A union-of-structs is basically a predicate saying that the root node of a value is using one of a set of
+    constructors, so (union of structs) == (multiple constructors + an instanceof predicate).
+
+For each constructor, an instanceof predicate must be implicitly defined. But a generic "is" function does the job.
+    (constructor Pair a b)
+    (define foo (Pair 5 9))
+    (define test (is foo Pair)) // test = true
+
+Constructors should be able to define constraints on their elements, just like functions:
+    (constructor Vector2 (a double) (b double))
+    (define foo (Vector2 5 10)) // ok
+    (define bar (Vector2 5 "a")) // assertion failure
+
+All data is based on constructors for now. In the future, add opaque values or define high-level types such as
+strings based on constructors.
+
+TODO need deconstruction!
+    possible:
+    (function pred (n) (is succ n) (match n (succ x) x)) // asserts n is a succ, and obtains its predecessor
+
+TODO how to handle assertions in proofs?
+    ignore -> means that assertions can "always" occur, and proving correctness later is even harder because we
+        need some way to even express "assertions won't fail here" before we can prove it. This may be similar
+        to a termination proof.
+        "ignore" means to assume the assertions are true, not only for the assertions but for all other expressions --
+        otherwise nothing can be shown in realistic cases.
+    must succeed -> any proof demands that all assertions on the way must be proven to succeed.
+    ---
+    non-recursive call of g within f:
+        - assertion failure in g also fails f
+        - infinite loop in g also hangs f
+    recursive call of f within f:
+        - absence of infinite loops is shown first before any inductive proof can be made
+        - similarly, based on assertions in the "outer" f, assertions in the "inner" f must be shown to succeed
+        - BUT: both fail if f calls f(f(...))
+--->
+Really the same problem for assertions and termination. Do we implicitly assume it to be proven or not? If we do,
+then all theorems are qualified by "if this terminates and does not violate any assertions, THEN ..." This might
+also mean that we cannot apply a theorem before we have proven that this is actually the case (check this -- should
+be possible to construct an example where a non-termination / assertion-violating theorem can be used to prove false
+things).
+-
+Practical aspect: If theorems are only proven to be partially correct (i.e. "true or hang" -- and now,
+"true or hang or fail an assertion"), then the user basically has to add, for each theroem, another theorem that
+claims the first one does not hang or fail an assertion. So for practical reasons, the default behavior should
+be that a theorem must be proven to terminate and succeed all assertions, in addition to being true. For now, we'll
+assume that this default behavior is always correct and wait for a case to show itself where partial but not total
+correctness is desired.
+
+---------------------------------------------------------------------------------------------------------------------
+Complete example: natural numbers
+
+(constructor 0)
+(constructor succ (n natural))
+(function natural (x) (or (is x 0) (is x succ))
+
+(function + ((x natural) (y natural))
+    (if (is x 0) y
+        (match x (succ xm1) (succ (+ x y)))
+    )
+)
+
+(theorem ((x natural)) (= (+ 0 x) x)) // trivial but ok
+(theorem ((x natural)) (= (+ x 0) x)) // not trivial
+(theorem ((x natural) (y natural)) (= (+ x y) (+ y x))) // commutativity
+(theorem ((x natural) (y natural) (z natural))
+    (=
+        (+ x (+ y z))
+        (+ (+ x y) z)
+    )
+) // associativity
+
+TODO: allow to delay proof. Typically, one wants to list theorems cleanly and defer all the messy proofs, just to
+keep the theorem part readable and also because the proofs may be automatically generated, and re-generated when
+something changes.
