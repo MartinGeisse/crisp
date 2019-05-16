@@ -69,10 +69,10 @@ Complete example: natural numbers
     )
 )
 
-(theorem ((x natural)) (= (+ 0 x) x)) // trivial but ok
-(theorem ((x natural)) (= (+ x 0) x)) // not trivial
-(theorem ((x natural) (y natural)) (= (+ x y) (+ y x))) // commutativity
-(theorem ((x natural) (y natural) (z natural))
+(theorem zeroPlus ((x natural)) (= (+ 0 x) x)) // trivial but ok
+(theorem plusZero ((x natural)) (= (+ x 0) x)) // not trivial
+(theorem plusCommutative ((x natural) (y natural)) (= (+ x y) (+ y x))) // commutativity
+(theorem plusAssociative ((x natural) (y natural) (z natural))
     (=
         (+ x (+ y z))
         (+ (+ x y) z)
@@ -82,3 +82,97 @@ Complete example: natural numbers
 TODO: allow to delay proof. Typically, one wants to list theorems cleanly and defer all the messy proofs, just to
 keep the theorem part readable and also because the proofs may be automatically generated, and re-generated when
 something changes.
+
+Basic proof syntax:
+	(proof zeroPlus ...)
+
+What is the point of a proof? To transform the theorem using valid steps until it is just the literal #true.
+
+The transformation is not just a function: Any theorem can be "proven" if arbitrary functions are allowed as
+transformations. Better: list transformations using a special transformation syntax. No transformation macros
+are needed for now; it is not clear to me if anything like that even makes sense (what is a truly reusable
+proof technique?) Even if there is some kind of reusable / repeatable proof technique, it would probably make
+more sense as a "plugin" in an automated proof assistant.
+
+The set of possible transformations is pre-defined and cannot be changed.
+
+To unfold function calls, we need a way to embed assertions and to embed termination requirements. Assertions
+come from the unfolded function and termination requirements exist for all function arguments due to eager
+evaluation. Termination can be expressed as an assertion using a special "terminates" predicate: (terminates X)
+yields true if X terminates and hangs if X hangs. Since assertions must be proven to terminate, this can be
+used to prove that arguments terminate. Assertions are respected by the simple fact that transformations cannot just
+unwrap an assertion to get to its body; transformations must instead prove all assertion terms to be true to get
+to its body.
+
+Transformation: Transform subterm
+	Syntax: (at (1 5 2) ...)
+	Applies a list of transformations to part of a theorem term. This assumes that all transformations are
+	valid when applied to subterms!
+
+Resolve global variable
+	Syntax: resolve
+	Replaces a reference to a global variable by its definition.
+
+Apply function
+	Syntax: apply-function
+	Replaces a call to a function that is explicitly specified as a lambda expression. The replacement
+	must contain termination predicates for all arguments (not for the function itself, since a lambda
+	expression always terminates), assertions from the function definition, and the function body with
+	all parameter occurences replaced by the actual argument expression. It does not matter that arguments
+	are evaluated more than once (proofs don't know about performance), and termination is stated
+	separately.
+
+Remove true from assertion
+	Syntax: assertTrue
+	Any assertion term that is true can be removed without any effect.
+
+Remove empty assertion
+	Syntax: assertEmpty
+	Any assertion without assertion terms can be replaced by its body.
+
+Apply theorem
+	Syntax: (apply-theorem theoremName bindings)
+	Applies a theorem that has been proven already, using the specified bindings for quantified variables from the
+	theorem to apply. Like for a function, termination predicates for all bindings are added, as well as assertions
+	from the applied theorem.
+	- This is useful when diretly matching a term to prove to a theorem, but it does not yet allow to
+	apply equalities from theorems! --> transformation "apply equality".
+	- how exactly is the subterm to apply the theroem to transformed by the application?
+	--> may replace any #true literal by an application of a theorem, including termination predicates, assertions
+	and body, with arbitary bindings. Assertions will make sure the theorem gets applied correctly.
+
+Apply equality
+	Syntax: (apply-equality <subpath>)
+	Subject expression must be of the form
+		(if (= a b) (... a ...) #false)	// (= a b) AND (...)
+	and the expression at <subpath> of (...) must be a. Transforms to
+		(if (= a b) (... b ...) #false)
+
+Symmetry, reflexivity and transitivity of equality
+
+Unwrapping of invoations of the same constructor in equality.
+
+Inequality of invocations of different constructors.
+
+Logical transformations (with logical operations represented using IF)
+
+Introduce true:
+	before: a
+	after: (if #true a #true)
+	meaning: "a" --> "true => a"
+
+
+BASIC PROBLEM FOR HIGHER-ORDER FUNCTIONS: Functions are not built from constructors.
+could be solved by fixing equality, but: how to handle equality of functions? Equality of body is easy,
+but equality of environment is not, especially because that can contain functions as well.
+But if f() returns a function then two invocations must return equal functions (referential transparency).
+-->
+Saying that two functions are equal if they return equal values may be useless because it is not decidable.
+But lots of things aren't decidable. So maybe this is actually a useful definition.
+-->
+Another approach is to observe that dynamic nesting of environments (environment A contains a function f
+that has environment B) cannot be cyclic because environments are immutable and constructed one after
+another. The only cycles exist in the global environment which must be handled specially.
+
+BTW don't actually need improper lists anywhere, so code can be build on lists which are using the constructors
+"cons" and "null"; the right element of a cons must be cons or null.
