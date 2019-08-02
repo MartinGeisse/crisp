@@ -1,6 +1,6 @@
-package name.martingeisse.crisp.runtime.builtin;
+package name.martingeisse.crisp.common.builtin;
 
-import name.martingeisse.crisp.runtime.CrispException;
+import name.martingeisse.crisp.common.CrispException;
 
 import java.lang.reflect.Method;
 
@@ -43,6 +43,6 @@ public abstract class FixedParameterBuiltin implements Builtin {
 		return "builtin:" + getProperName();
 	}
 
-	// expects public method "callInternal"
+	// expects public method "callInternal", but the signature is unknown in this base class
 
 }

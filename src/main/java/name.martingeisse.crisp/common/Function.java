@@ -2,12 +2,12 @@
  * Copyright (c) 2018 Martin Geisse
  * This file is distributed under the terms of the MIT license.
  */
-package name.martingeisse.crisp.runtime;
+package name.martingeisse.crisp.common;
 
 import com.google.common.collect.ImmutableList;
+import name.martingeisse.crisp.common.CrispException;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,11 +16,11 @@ import java.util.Map;
 public final class Function {
 
 	private final String properName;
-	private final Map<String, Object> environment;
+	private final Environment environment;
 	private final ImmutableList<Parameter> parameters;
 	private final Object body;
 
-	public Function(String properName, Map<String, Object> environment, ImmutableList<Parameter> parameters, Object body) {
+	public Function(String properName, Environment environment, ImmutableList<Parameter> parameters, Object body) {
 		this.properName = properName;
 		this.environment = environment;
 		this.parameters = parameters;
@@ -31,7 +31,7 @@ public final class Function {
 		return properName;
 	}
 
-	public Map<String, Object> getEnvironment() {
+	public Environment getEnvironment() {
 		return environment;
 	}
 
@@ -48,15 +48,15 @@ public final class Function {
 		return "function " + properName;
 	}
 
-	public Map<String, Object> buildBodyEnvironment(Object[] arguments) {
+	public Environment buildBodyEnvironment(Object[] arguments) {
 		if (arguments.length != parameters.size()) {
 			throw new CrispException("function " + properName + " expected " + parameters.size() + " arguments, got " + arguments.length);
 		}
-		Map<String, Object> bodyEnvironment = new HashMap<>(environment);
+		Map<String, Object> bodyBindings = new HashMap<>();
 		for (int i = 0; i < parameters.size(); i++) {
-			bodyEnvironment.put(parameters.get(i).getIdentifier(), arguments[i]);
+			bodyBindings.put(parameters.get(i).getIdentifier(), arguments[i]);
 		}
-		return bodyEnvironment;
+		return new Environment(bodyBindings, environment);
 	}
 
 	public static final class Parameter {

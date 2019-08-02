@@ -2,7 +2,7 @@
  * Copyright (c) 2018 Martin Geisse
  * This file is distributed under the terms of the MIT license.
  */
-package name.martingeisse.crisp.runtime;
+package name.martingeisse.crisp.common;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -54,7 +54,7 @@ public final class Pair {
 		list.add(head);
 		if (tail instanceof Pair) {
 			((Pair) tail).addToList(list);
-		} else if (!(tail instanceof Null)) {
+		} else if (!(tail instanceof Nil)) {
 			throw new CrispException("invalid tail list: " + tail);
 		}
 	}
@@ -74,7 +74,7 @@ public final class Pair {
 		if (tail instanceof Pair) {
 			builder.append(' ');
 			toString((Pair) tail, builder);
-		} else if (!(tail instanceof Null)) {
+		} else if (!(tail instanceof Nil)) {
 			builder.append(" . ");
 			builder.append(tail);
 		}

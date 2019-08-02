@@ -1,8 +1,4 @@
-package name.martingeisse.crisp.runtime;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+package name.martingeisse.crisp.common;
 
 /**
  *
@@ -18,7 +14,7 @@ public final class ExpressionBuilder {
 	}
 
 	public static Object list(Object... elements) {
-		Object list = Null.INSTANCE;
+		Object list = Nil.INSTANCE;
 		for (int i = elements.length - 1; i >= 0; i--) {
 			list = pair(elements[i], list);
 		}
@@ -38,7 +34,7 @@ public final class ExpressionBuilder {
 	}
 
 	public static Object lambda(Object body, String... parameters) {
-		Object parameterList = Null.INSTANCE;
+		Object parameterList = Nil.INSTANCE;
 		for (int i = parameters.length - 1; i >= 0; i--) {
 			parameterList = pair(identifier(parameters[i]), parameterList);
 		}

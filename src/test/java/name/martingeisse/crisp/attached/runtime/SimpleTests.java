@@ -1,10 +1,13 @@
-package name.martingeisse.crisp.runtime;
+package name.martingeisse.crisp.attached.runtime;
 
-import name.martingeisse.crisp.runtime.builtin.BuiltinEnvironment;
+import name.martingeisse.crisp.common.CrispException;
+import name.martingeisse.crisp.common.Identifier;
+import name.martingeisse.crisp.common.Nil;
+import name.martingeisse.crisp.common.builtin.BuiltinEnvironment;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static name.martingeisse.crisp.runtime.ExpressionBuilder.*;
+import static name.martingeisse.crisp.common.ExpressionBuilder.*;
 
 /**
  *
@@ -21,7 +24,7 @@ public class SimpleTests {
 	@Test
 	public void testLiterals() {
 		assertEval(5, 5);
-		assertEval(Null.INSTANCE, Null.INSTANCE);
+		assertEval(Nil.INSTANCE, Nil.INSTANCE);
 		assertEval(false, false);
 		assertEval(true, true);
 		assertEval("foo", "foo");
@@ -52,7 +55,7 @@ public class SimpleTests {
 
 	@Test
 	public void testKeywordExpressions() {
-		assertEval(Null.INSTANCE, keyword("null"));
+		assertEval(Nil.INSTANCE, keyword("nil"));
 		assertEval(false, keyword("false"));
 		assertEval(true, keyword("true"));
 

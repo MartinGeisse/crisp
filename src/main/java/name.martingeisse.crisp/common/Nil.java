@@ -2,18 +2,18 @@
  * Copyright (c) 2018 Martin Geisse
  * This file is distributed under the terms of the MIT license.
  */
-package name.martingeisse.crisp.runtime;
+package name.martingeisse.crisp.common;
 
 /**
  *
  */
-public final class Null {
+public final class Nil {
 
-	public static final Null INSTANCE = new Null();
+	public static final Nil INSTANCE = new Nil();
 
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof Null;
+		return obj instanceof Nil;
 	}
 
 	@Override
@@ -23,6 +23,6 @@ public final class Null {
 
 	@Override
 	public String toString() {
-		return "null";
+		return "nil";
 	}
 }

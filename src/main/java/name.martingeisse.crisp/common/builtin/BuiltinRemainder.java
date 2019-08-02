@@ -1,4 +1,4 @@
-package name.martingeisse.crisp.runtime.builtin;
+package name.martingeisse.crisp.common.builtin;
 
 /**
  *

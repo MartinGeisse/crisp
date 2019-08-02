@@ -1,10 +1,10 @@
-package name.martingeisse.crisp.runtime;
+package name.martingeisse.crisp.attached.runtime;
 
-import name.martingeisse.crisp.runtime.builtin.BuiltinEnvironment;
+import name.martingeisse.crisp.common.builtin.BuiltinEnvironment;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static name.martingeisse.crisp.runtime.ExpressionBuilder.call;
+import static name.martingeisse.crisp.common.ExpressionBuilder.call;
 
 /**
  *

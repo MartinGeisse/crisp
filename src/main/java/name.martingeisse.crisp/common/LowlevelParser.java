@@ -1,6 +1,5 @@
-package name.martingeisse.crisp.runtime;
+package name.martingeisse.crisp.common;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -140,7 +139,7 @@ public final class LowlevelParser {
 	}
 
 	private Object readList() throws IOException {
-		// no improper lists (tail other than list or null) for now
+		// no improper lists (tail other than list or nil) for now
 		read();
 		Object list = parseTail();
 		read();
@@ -150,7 +149,7 @@ public final class LowlevelParser {
 	private Object parseTail() throws IOException {
 		Object head = parseNested();
 		if (head == null) {
-			return Null.INSTANCE;
+			return Nil.INSTANCE;
 		}
 		Object tail = parseTail();
 		return new Pair(head, tail);
