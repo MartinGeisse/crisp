@@ -176,3 +176,10 @@ another. The only cycles exist in the global environment which must be handled s
 
 BTW don't actually need improper lists anywhere, so code can be build on lists which are using the constructors
 "cons" and "null"; the right element of a cons must be cons or null.
+
+---------------------------------------------------------------------------------------------------------------------
+
+Use {a b c} -> macro-wrapped (a b c) to invoke macros at compile-time. Use keywords for special forms at runtime.
+#if is a special form since it needs lazy eval but is also used to *implement* lazy eval.
+AND/OR can be implemented using macros or special forms (TODO) --> only one way to do it, and special forms feel
+more natural. This also means that macros can wait until later.
