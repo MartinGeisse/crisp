@@ -94,7 +94,8 @@ are needed for now; it is not clear to me if anything like that even makes sense
 proof technique?) Even if there is some kind of reusable / repeatable proof technique, it would probably make
 more sense as a "plugin" in an automated proof assistant.
 
-The set of possible transformations is pre-defined and cannot be changed.
+The set of possible transformations is pre-defined and cannot be changed, otherwise the system would easily
+become unsound.
 
 To unfold function calls, we need a way to embed assertions and to embed termination requirements. Assertions
 come from the unfolded function and termination requirements exist for all function arguments due to eager
